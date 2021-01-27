@@ -100,7 +100,6 @@ points(oc[[1]],
 
 
 library(imager)
-canny <- cannyEdges(y_tif)
 canny <- cannyEdges(as.cimg(imageData(x_bri[,,1])))
 
 path <- tempfile(pattern = "temp", fileext = ".jpeg")
@@ -198,7 +197,8 @@ mbr <- MBR(as.matrix(points))
 
 # Plot the hull, the MBR, and the points
 limits <-
-  alphahull::apply(mbr, 2, function(x)
+  
+  apply(mbr, 2, function(x)
     c(min(x), max(x))) # Plotting limits
 plot(
   alphahull::ashape(points, alpha = 1000),
@@ -596,9 +596,37 @@ text(label = round(st_distance(pchord, mid_point_on_chord),2),
 
 
 
+# let's resize all images to the same dimension
+img_file <- "test-images/gp.png"  # 
+EBImage::display(EBImage::readImage(img_file))
+
+# copy image to temp folder
+temp_name <- tempfile("", , ".png")
+EBImage::writeImage(EBImage::readImage(img_file), temp_name, dpi = 300)
+
+# resize copy
+webshot::resize(temp_name,  "300x")
+
+# work on it
+tmp_img <- EBImage::readImage(temp_name)
+EBImage::display(tmp_img)
+
+# delete it
+unlink(temp_name)
 
 
-# resize images and overwrite 
-# webshot::resize(img_file,  "600x")
+
+jpeg("test-images/filename.jpeg", 
+     width = 300)  # default units = "px"
+par(mar = c(0,0,0,0))                             # set margins to 0
+plot.new()                                        # open plot
+usr <- par(no.readonly = TRUE)$usr                # get extremes
+# use extremes in rasterImage
+rasterImage(EBImage::readImage(img_file))
+# in long form:
+#rasterImage(img, xleft=usr[1], ybottom=usr[3], xright=usr[2], ytop=usr[4], interpolate = FALSE)
+dev.off()
+
+
 
 

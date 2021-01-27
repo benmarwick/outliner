@@ -72,8 +72,6 @@ ui <- fluidPage(# Application title
     
     mainPanel(
       tabsetPanel(
-        tabPanel("Interactive browser", displayOutput("widget")),
-        tabPanel("B&W raster", displayOutput("bw_raster")),
         tabPanel("Set scale", plotOutput("scale_raster", click = "plot_click")),
         tabPanel("Contours & chords", plotOutput("contour"))
       ),
@@ -104,14 +102,23 @@ ui <- fluidPage(# Application title
 
 
 server <- function(input, output) {
+  
+  # read in the image file
   img <- reactive({
     f <- input$image
     if (is.null(f))
       return(NULL)
-    readImage(f$datapath)
+    # EBImage::readImage(f$datapath)
+    
+    # here we resize img and save to tmp
+    # copy image to temp folder
+    temp_name <- tempfile("",  , ".png") # we need 2 commas here
+    EBImage::writeImage(EBImage::readImage(f$datapath), temp_name, dpi = 300)
+    # resize copy
+    webshot::resize(temp_name,  "300x")
+    # read in resized img to work on in app
+    EBImage::readImage(temp_name)
   })
-  
-
 
   # modify the image: cropping
 prepped_image <- reactive({
@@ -128,18 +135,6 @@ prepped_image <- reactive({
   # Cropping
   x3[(input$slider5 * x_dim[1]):(input$slider6 * x_dim[1]),
            (input$slider7 * x_dim[2]):(input$slider8 * x_dim[2]), ]
-  })
-  
-  # display image unaltered
-  output$widget <- renderDisplay({
-    req(img())
-    EBImage::display(img())
-  })
-  
-  # display image after preparations
-  output$bw_raster <- renderDisplay({
-    req(prepped_image())
-    EBImage::display(prepped_image())
   })
   
   # display image after preparations so we can get the scale factor
