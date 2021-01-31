@@ -5,7 +5,7 @@ library(maptools)
 library(autothresholdr)
 library(ijtiff)
 library(ggplot2)
-library(dplyr)
+library(tidyverse)
 
 img_file <- "test-images/levpoint.jpg"
 x <- readImage(img_file)
@@ -647,6 +647,9 @@ f2 <- "test-images/output.jpg"
 cmd <- paste0("convert " , shQuote(f1), " -define jpeg:extent=5kb ", shQuote(f2))
 system(cmd)
 
+
+gp500 <- read_csv("~/Downloads/gp-500dpi-outline-coords-2021-Jan-30-22h55m13s.csv")
+gp500 <- read_csv("~/Downloads/gp-500dpi-outline-coords-2021-Jan-30-22h55m13s.csv")
 
 
 
