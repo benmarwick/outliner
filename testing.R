@@ -594,8 +594,6 @@ text(label = round(st_distance(pchord, mid_point_on_chord),2),
      x = mid_point_on_chord[1], 
      y = mid_point_on_chord[2])
 
-
-
 # let's resize all images to the same dimension
 img_file <- "test-images/gp.png"  # 
 EBImage::display(EBImage::readImage(img_file))
@@ -604,12 +602,23 @@ EBImage::display(EBImage::readImage(img_file))
 temp_name <- tempfile("", , ".png")
 EBImage::writeImage(EBImage::readImage(img_file), temp_name, dpi = 300)
 
+# resize to specific file size
+temp_name_output <- tempfile("", , "-output.png")
+wd <- getwd()
+setwd(dirname(temp_name))
+cmd <- paste0("convert " , 
+              shQuote(basename(temp_name)),
+              " -define jpeg:extent=50kb -density 50x50 -quality 100 ", 
+              shQuote(basename(temp_name_output)))
+system(cmd)
+setwd(wd)
 # resize copy
-webshot::resize(temp_name,  "300x")
+webshot::resize(temp_name_output,  "300x")
 
 # work on it
-tmp_img <- EBImage::readImage(temp_name)
+tmp_img <- EBImage::readImage(temp_name_output)
 EBImage::display(tmp_img)
+
 
 # delete it
 unlink(temp_name)
@@ -626,6 +635,17 @@ rasterImage(EBImage::readImage(img_file))
 # in long form:
 #rasterImage(img, xleft=usr[1], ybottom=usr[3], xright=usr[2], ytop=usr[4], interpolate = FALSE)
 dev.off()
+
+
+# test this
+EBImage::writeImage(EBImage::readImage("test-images/gp2.png"), "test-images/original.jpeg")
+system("convert test-images/original.jpeg -define jpeg:extent=50kb test-images/output.jpg")
+
+f1 <- "test-images/original.jpeg"
+f2 <- "test-images/output.jpg"
+
+cmd <- paste0("convert " , shQuote(f1), " -define jpeg:extent=5kb ", shQuote(f2))
+system(cmd)
 
 
 

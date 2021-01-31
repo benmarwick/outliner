@@ -9,6 +9,7 @@ library("shiny")
 library("EBImage") # >= 4.19.3
 library(imager)
 library(sf)
+library(webshot)
 
 ui <- fluidPage(# Application title
   titlePanel("Image outline, chords, and landmarks"),
