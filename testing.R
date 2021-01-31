@@ -100,7 +100,8 @@ points(oc[[1]],
 
 
 library(imager)
-canny <- cannyEdges(as.cimg(imageData(x_bri[,,1])))
+library(EBImage)
+#canny <- cannyEdges(as.cimg(imageData(x_bri[,,1])))
 
 path <- tempfile(pattern = "temp", fileext = ".jpeg")
 writeImage(x_bri, path)
@@ -119,6 +120,8 @@ lines(oc[[1]],
 points(oc[[1]], 
        col=2, 
        cex = 0.25)
+
+oc[[1]]/6
 
 
 ########
@@ -649,7 +652,30 @@ system(cmd)
 
 
 gp500 <- read_csv("~/Downloads/gp-500dpi-outline-coords-2021-Jan-30-22h55m13s.csv")
-gp500 <- read_csv("~/Downloads/gp-500dpi-outline-coords-2021-Jan-30-22h55m13s.csv")
+gp100n <- read_csv("~/Downloads/gp-100dpi-outline-coords-normal.csv")
+gp100s <- read_csv("~/Downloads/gp-100dpi-outline-coords-scaled.csv")
+fiji <- read_tsv("~/Downloads/gp-100dpi.txt", col_names = FALSE)
+
+p500 <- 
+ggplot(gp500) +
+  aes(V1, V2) +
+  geom_point() +
+  coord_equal()
+
+p100 <- 
+ggplot(gp100) +
+  aes(V1, V2) +
+  geom_point() +
+  coord_equal()
+
+fijip <- 
+  ggplot(fiji) +
+  aes(X1, X2) +
+  geom_point() +
+  coord_equal()
+
+library(cowplot)
+plot_grid(p500, p100, fijip)
 
 
 

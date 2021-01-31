@@ -4,6 +4,8 @@
 #  
 # BiocManager::install("EBImage")
 
+# last change
+
 
 library("shiny")
 library("EBImage") # >= 4.19.3
@@ -479,7 +481,10 @@ output$contour <- renderPlot({
     },
   content <- function(file) {
     req(contour_points())
-  write.csv(contour_points(), file)
+    req(scale_factor_storage())
+    # scale the contour coords to the physical units
+    df <- contour_points() / scale_factor_storage()
+  write.csv(df, file)
   },
   contentType = "text/csv")
 
